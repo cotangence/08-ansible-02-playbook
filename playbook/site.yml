@@ -1,0 +1,74 @@
+---
+- name: Install Clickhouse
+  hosts: clickhouse
+  handlers:
+    - name: Start clickhouse service
+      become: true
+      ansible.builtin.service:
+        name: clickhouse-server
+        state: restarted
+    - name: Start vector service
+      become: true
+      ansible.builtin.service:
+        name: vector
+        state: started
+  tasks:
+    - block:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/deb/pool/main/c/clickhouse/{{ item }}_{{ clickhouse_version }}_amd64.deb"
+            dest: "{{ workdir }}/{{ item }}_{{ clickhouse_version }}_amd64.deb"
+            mode: 0755
+          with_items: "{{ clickhouse_packages }}"
+      rescue:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/deb/pool/main/c/clickhouse/clickhouse-common-static_{{ clickhouse_version }}_amd64.deb"
+            dest: "{{ workdir }}/clickhouse-common-static_{{ clickhouse_version }}_amd64.deb"
+            mode: 0755
+          with_items: "{{ clickhouse_packages }}"
+    - name: Clickhouse | Install package clickhouse-common-static
+      become: true
+      ansible.builtin.apt:
+        deb: "{{ workdir }}/clickhouse-common-static_{{ clickhouse_version }}_amd64.deb"
+      notify: Start clickhouse service
+
+    - name: Clickhouse | Install package clickhouse-client
+      become: true
+      ansible.builtin.apt:
+        deb: "{{ workdir }}/clickhouse-client_{{ clickhouse_version }}_amd64.deb"
+      notify: Start clickhouse service
+
+    - name: Clickhouse | Install package clickhouse-server
+      become: true
+      ansible.builtin.apt:
+        deb: "{{ workdir }}/clickhouse-server_{{ clickhouse_version }}_amd64.deb"
+      notify: Start clickhouse service
+
+# tasks file for vector
+    - name: Download Vector distributive
+      ansible.builtin.get_url:
+        url: "https://packages.timber.io/vector/latest/vector_{{ vector_version }}_amd64.deb"
+        dest: "{{ workdir }}/vector_{{ vector_version }}_amd64.deb"
+        mode: "0755"
+    - name: Install Vector
+      become: true
+      ansible.builtin.apt:
+        deb: "{{ workdir }}/vector_{{ vector_version }}_amd64.deb"
+      notify: Start vector service
+    - name: Deploy Vector Configuration
+      become: true
+      ansible.builtin.template:
+        src: ./templates/vector_config.j2
+        dest: /etc/vector/vector.toml
+        mode: "0644"
+      notify: Start vector service
+
+
+    - name: Flush handlers
+      meta: flush_handlers
+    - name: Create database
+      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
+      register: create_db
+      failed_when: create_db.rc != 0 and create_db.rc != 82
+      changed_when: create_db.rc == 0
