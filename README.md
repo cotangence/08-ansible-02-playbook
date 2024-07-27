@@ -13,3 +13,9 @@
 
 Запуск ansible-lint site.yml
 ![image](https://github.com/user-attachments/assets/dc4a7ac4-3273-49da-b5e7-a76e99bd8785)
+
+Установка с ключем --diff
+![image](https://github.com/user-attachments/assets/8f453c54-769b-47ee-8c3a-af7482e2c24f)
+![image](https://github.com/user-attachments/assets/fdedf586-d979-45c1-8351-9c96322dc732)
+Повторный запуск с ключем --diff
+![image](https://github.com/user-attachments/assets/fa2d27cc-388b-4b6f-9b30-b1a0d6b33eff)
