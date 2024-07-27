@@ -10,3 +10,6 @@
 
 На целевой машине 
 ![image](https://github.com/user-attachments/assets/a344a43c-f243-4997-8b4d-383222657cdc)
+
+Запуск ansible-lint site.yml
+![image](https://github.com/user-attachments/assets/dc4a7ac4-3273-49da-b5e7-a76e99bd8785)
