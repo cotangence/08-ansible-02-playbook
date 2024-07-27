@@ -1,0 +1,8 @@
+---
+workdir: "/home/user"
+clickhouse_version: "24.6.2.17"
+clickhouse_packages:
+  - clickhouse-client
+  - clickhouse-server
+  - clickhouse-common-static
+vector_version: "0.39.0-1"
