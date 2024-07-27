@@ -19,3 +19,9 @@
 ![image](https://github.com/user-attachments/assets/fdedf586-d979-45c1-8351-9c96322dc732)
 Повторный запуск с ключем --diff
 ![image](https://github.com/user-attachments/assets/fa2d27cc-388b-4b6f-9b30-b1a0d6b33eff)
+
+В плейбуке используются модули:
+ansible.builtin.get_url - получение адреса
+ansible.builtin.apt - менеджер пакетов apt
+ansible.builtin.command - выполнение команды на удаленной машине
+ansible.builtin.service - модуль работы с сервисами
